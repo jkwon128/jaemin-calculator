@@ -1,14 +1,57 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>계산기</title>
   <style>
+    :root[data-theme="dark"] {
+      --bg-page: #1a1a2e;
+      --bg-calc: #16213e;
+      --bg-display: #0f3460;
+      --bg-number: #1a1a2e;
+      --bg-number-hover: #252547;
+      --bg-special: #0f3460;
+      --bg-special-hover: #1a4a80;
+      --bg-operator: #533483;
+      --bg-operator-hover: #6b44a8;
+      --bg-equals: #e94560;
+      --bg-equals-hover: #ff5577;
+      --text-result: #e2e8f0;
+      --text-expression: #a0aec0;
+      --text-special: #a0aec0;
+      --text-number: #e2e8f0;
+      --toggle-bg: #0f3460;
+      --toggle-hover: #1a4a80;
+      --toggle-icon: '☀️';
+    }
+
+    :root[data-theme="light"] {
+      --bg-page: #f0f2f5;
+      --bg-calc: #ffffff;
+      --bg-display: #e8edf5;
+      --bg-number: #f5f5f5;
+      --bg-number-hover: #e8e8e8;
+      --bg-special: #dde3ee;
+      --bg-special-hover: #cdd5e4;
+      --bg-operator: #7b5ea7;
+      --bg-operator-hover: #6b44a8;
+      --bg-equals: #e94560;
+      --bg-equals-hover: #ff5577;
+      --text-result: #1a1a2e;
+      --text-expression: #6b7280;
+      --text-special: #374151;
+      --text-number: #1a1a2e;
+      --toggle-bg: #dde3ee;
+      --toggle-hover: #cdd5e4;
+      --toggle-icon: '🌙';
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      transition: background-color 0.2s, color 0.2s;
     }
 
     body {
@@ -16,20 +59,48 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background: #1a1a2e;
+      background: var(--bg-page);
       font-family: 'Segoe UI', sans-serif;
     }
 
     .calculator {
-      background: #16213e;
+      background: var(--bg-calc);
       border-radius: 24px;
       padding: 24px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
       width: 320px;
     }
 
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .theme-toggle {
+      background: var(--toggle-bg);
+      border: none;
+      border-radius: 20px;
+      padding: 6px 14px;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-special);
+      font-weight: 500;
+    }
+
+    .theme-toggle:hover {
+      background: var(--toggle-hover);
+    }
+
+    .theme-toggle:active {
+      transform: scale(0.94);
+    }
+
     .display {
-      background: #0f3460;
+      background: var(--bg-display);
       border-radius: 16px;
       padding: 20px 24px;
       margin-bottom: 20px;
@@ -41,14 +112,14 @@
     }
 
     .display .expression {
-      color: #a0aec0;
+      color: var(--text-expression);
       font-size: 14px;
       min-height: 20px;
       word-break: break-all;
     }
 
     .display .result {
-      color: #e2e8f0;
+      color: var(--text-result);
       font-size: 40px;
       font-weight: 300;
       word-break: break-all;
@@ -77,39 +148,39 @@
     }
 
     .btn-number {
-      background: #1a1a2e;
-      color: #e2e8f0;
+      background: var(--bg-number);
+      color: var(--text-number);
     }
 
     .btn-number:hover {
-      background: #252547;
+      background: var(--bg-number-hover);
     }
 
     .btn-operator {
-      background: #533483;
+      background: var(--bg-operator);
       color: #e2e8f0;
     }
 
     .btn-operator:hover {
-      background: #6b44a8;
+      background: var(--bg-operator-hover);
     }
 
     .btn-special {
-      background: #0f3460;
-      color: #a0aec0;
+      background: var(--bg-special);
+      color: var(--text-special);
     }
 
     .btn-special:hover {
-      background: #1a4a80;
+      background: var(--bg-special-hover);
     }
 
     .btn-equals {
-      background: #e94560;
+      background: var(--bg-equals);
       color: white;
     }
 
     .btn-equals:hover {
-      background: #ff5577;
+      background: var(--bg-equals-hover);
     }
 
     .btn-zero {
@@ -119,6 +190,9 @@
 </head>
 <body>
   <div class="calculator">
+    <div class="top-bar">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️ 라이트</button>
+    </div>
     <div class="display">
       <div class="expression" id="expression"></div>
       <div class="result" id="result">0</div>
@@ -159,6 +233,19 @@
 
     const resultEl = document.getElementById('result');
     const expressionEl = document.getElementById('expression');
+    const themeBtn = document.getElementById('themeBtn');
+    const html = document.documentElement;
+
+    function toggleTheme() {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      themeBtn.textContent = isDark ? '🌙 다크' : '☀️ 라이트';
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    }
+
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+    themeBtn.textContent = savedTheme === 'dark' ? '☀️ 라이트' : '🌙 다크';
 
     function updateDisplay() {
       resultEl.textContent = currentValue;
